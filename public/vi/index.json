@@ -1,0 +1,106 @@
+[
+{
+	"uri": "http://localhost:1313/vi/1-introduce/",
+	"title": "Giới thiệu",
+	"tags": [],
+	"description": "",
+	"content": "Tuân thủ cấu hình với AWS Config và khắc phục Chủ đề của chúng tôi tập trung vào việc xây dựng và triển khai nền tảng quản lý tuân thủ cấu hình (Configuration Compliance) trên AWS bằng cách sử dụng AWS Config, Config Rules, và Automated Remediation. Mục tiêu là đảm bảo hệ thống luôn duy trì trạng thái cấu hình đúng theo chuẩn đã định, phát hiện nhanh chóng các sai lệch (drift), và tự động khắc phục khi vi phạm xảy ra.\nQuá trình triển khai bao gồm:\nKích hoạt AWS Config và thiết lập S3 bucket, SNS topic để ghi nhận và thông báo về các thay đổi cấu hình.\nTạo các Config Rules (AWS managed hoặc custom) để giám sát các tài nguyên như S3, EC2, IAM, RDS…\nThiết lập automated remediation giúp tự động sửa các cấu hình sai, giảm thiểu rủi ro bảo mật và lỗi vận hành.\nTích hợp Amazon EventBridge và CloudWatch để cảnh báo ngay lập tức khi phát hiện drift hoặc vi phạm.\nLưu trữ log drift và compliance trên S3 phục vụ mục đích audit và báo cáo.\nXây dựng compliance dashboard và báo cáo tự động giúp quản trị viên dễ dàng theo dõi tình trạng tuân thủ.\n"
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/2.1-create-iam-user/",
+	"title": "Tạo IAM User",
+	"tags": [],
+	"description": "",
+	"content": "Tạo IAM User để cấu hình AWS Config AWS Config cần một IAM User với quyền phù hợp để cấu hình và quản lý các tài nguyên AWS.\nVào dịch vụ IAM trong AWS Management Console. Chọn Users → Add users. Nhập tên user (ví dụ: UserADMIN). Ở AWS access type, chọn: Access key - Programmatic access nếu bạn muốn dùng CLI/SDK. Password - AWS Management Console access nếu cần đăng nhập Console. Nhấn Next để gán quyền: Chọn Attach existing policies directly. Gắn quyền AdministratorAccess (hoặc quyền tối thiểu theo nguyên tắc least privilege, như AWSConfigUserAccess). Nhấn Next, bỏ qua tag nếu không cần. Chọn Create user. Lưu lại Access key và Secret access key (nếu tạo quyền programmatic access). "
+},
+{
+	"uri": "http://localhost:1313/vi/3-configuration/3.1-setup-aws-config/",
+	"title": "Thiết lập AWS Config",
+	"tags": [],
+	"description": "",
+	"content": "Bật và cấu hình AWS Config AWS Config cho phép bạn đánh giá, kiểm tra và giám sát cấu hình của các tài nguyên AWS, đồng thời lưu trữ lịch sử thay đổi để phục vụ kiểm toán và tuân thủ.\nCác bước thực hiện Mở AWS Management Console và truy cập AWS Config. Nếu đây là lần đầu thiết lập, chọn Get started. Ở mục Settings: Resource types: Chọn All resources (theo dõi toàn bộ tài nguyên) hoặc chỉ định các loại tài nguyên cần giám sát. Delivery method: S3 bucket: Chọn bucket đã tạo trước đó để lưu file cấu hình. SNS Topic: Chọn SNS Topic đã tạo ở bước 2.4 để nhận thông báo thay đổi. Ở mục AWS Config role: Chọn Create AWS Config service-linked role nếu chưa có role này. Nhấn Next → Kiểm tra lại cấu hình. Nhấn Confirm để bật AWS Config. Kiểm tra hoạt động Sau khi bật, AWS Config sẽ bắt đầu ghi nhận trạng thái cấu hình hiện tại và cập nhật khi có thay đổi. Để thử nghiệm: Chỉnh sửa một tài nguyên mà AWS Config đang theo dõi (ví dụ: thay đổi quyền truy cập của S3 bucket). Quay lại AWS Config → Resources → tìm tài nguyên đó. Kiểm tra Configuration timeline để xem lịch sử thay đổi. ⚠ Lưu ý: Một số thay đổi nhỏ (như metadata không quan trọng) có thể không kích hoạt ghi nhận ngay. Thời gian đồng bộ có thể mất vài phút tùy dịch vụ.\n"
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/",
+	"title": "Chuẩn bị",
+	"tags": [],
+	"description": "",
+	"content": "Chuẩn bị Trong phần này, bạn sẽ thiết lập các tài nguyên AWS cơ bản cần thiết cho workshop.\nCác bước này cần được hoàn thành trước khi chuyển sang giai đoạn cấu hình.\nBạn sẽ học cách: Tạo IAM User với quyền phù hợp. Khởi chạy EC2 instance. Tạo S3 bucket để lưu trữ. Thiết lập SNS Topic để nhận thông báo. Bật CloudTrail để ghi lại hoạt động API. "
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/2.2-create-ec2/",
+	"title": "Tạo EC2 Instance",
+	"tags": [],
+	"description": "",
+	"content": "Khởi tạo EC2 Instance để kiểm thử Chúng ta sẽ tạo một EC2 instance nhỏ để tạo ra các thay đổi cấu hình, giúp AWS Config có dữ liệu để theo dõi.\nVào dịch vụ EC2 trong AWS Management Console. Chọn Launch instance. Nhập tên instance (ví dụ: AWS-CONFIG). Chọn Amazon Machine Image (AMI) như Amazon Linux 2. Chọn loại instance nhỏ (ví dụ: t2.micro). Ở phần Key pair, tạo mới hoặc chọn key pair đã có. Trong Network settings, chỉ cho phép inbound rule cần thiết (ví dụ: SSH từ IP của bạn). Nhấn Launch instance. "
+},
+{
+	"uri": "http://localhost:1313/vi/3-configuration/3.2-add-config-rules/",
+	"title": "Thêm Config Rules",
+	"tags": [],
+	"description": "",
+	"content": "Thêm Config Rules để giám sát cấu hình Config Rules cho phép bạn xác định các tiêu chuẩn cấu hình và kiểm tra tài nguyên AWS có tuân thủ hay không.\nTrong AWS Management Console, vào AWS Config → Rules → Add rule. Chọn AWS Managed Rules (có sẵn) hoặc Custom Rule (do bạn tạo). Ví dụ: Tìm và chọn rule required-tags để bắt buộc tài nguyên phải có thẻ. Cấu hình tham số cho rule (nếu có). Chọn Trigger: Configuration changes (kích hoạt khi tài nguyên thay đổi). Periodic (kiểm tra định kỳ). Nhấn Next và Add rule. "
+},
+{
+	"uri": "http://localhost:1313/vi/3-configuration/",
+	"title": "Cấu hình",
+	"tags": [],
+	"description": "",
+	"content": "Cấu hình Trong phần này, bạn sẽ cấu hình các dịch vụ AWS để giám sát và tự động phản ứng với các thay đổi trong môi trường AWS của bạn.\nBạn sẽ học cách: Bật và cấu hình AWS Config để theo dõi thay đổi tài nguyên. Tạo Config Rules để đánh giá mức độ tuân thủ. Thiết lập Amazon EventBridge để phản hồi các thay đổi cấu hình. "
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/2.3-create-s3/",
+	"title": "Tạo S3 Bucket",
+	"tags": [],
+	"description": "",
+	"content": "Tạo S3 Bucket để lưu trữ dữ liệu AWS Config AWS Config cần một S3 Bucket để lưu trữ lịch sử cấu hình và các file snapshot.\nVào dịch vụ S3 trong AWS Management Console. Chọn Create bucket. Nhập tên bucket (ví dụ: config-log-bucket-23) — tên phải duy nhất trên toàn AWS. Chọn Region phù hợp với tài nguyên của bạn. Ở phần Block Public Access, giữ nguyên Enable để bảo mật. Các thiết lập khác để mặc định hoặc tùy chỉnh theo yêu cầu. Nhấn Create bucket. "
+},
+{
+	"uri": "http://localhost:1313/vi/3-configuration/3.3-setup-eventbridge/",
+	"title": "Thiết lập EventBridge",
+	"tags": [],
+	"description": "",
+	"content": "Thiết lập EventBridge để nhận thông báo sự kiện từ AWS Config EventBridge giúp bạn tạo các luồng sự kiện tự động khi có thay đổi cấu hình hoặc vi phạm quy tắc.\nTrong AWS Management Console, vào Amazon EventBridge. Chọn Rules → Create rule. Nhập tên rule (ví dụ: config-rule-violation). Ở phần Event source, chọn: AWS services → AWS Config. Ở phần Event pattern, chọn: Loại sự kiện: Config Rules Compliance Change hoặc Configuration Item Change. Ở phần Target, chọn: SNS Topic, Lambda function hoặc Step Functions để xử lý sự kiện. Nhấn Create. "
+},
+{
+	"uri": "http://localhost:1313/vi/4-cleanup-resources/",
+	"title": "Dọn dẹp tài nguyên",
+	"tags": [],
+	"description": "",
+	"content": "Dọn dẹp tài nguyên Thực hiện các bước sau để xóa toàn bộ tài nguyên AWS được tạo trong workshop. Cẩn thận – việc này sẽ xóa vĩnh viễn dữ liệu và cấu hình.\n4.1 Xóa AWS Config Recorder \u0026amp; Delivery Channel Vào AWS Config → Settings. Dừng Configuration Recorder. Xóa Delivery Channel. Xác nhận xóa. 4.2 Xóa Config Rules Trong AWS Config, vào Rules. Chọn từng rule đã tạo. Nhấn Delete → Xác nhận. 4.3 Xóa S3 Bucket Vào Amazon S3. Xóa toàn bộ dữ liệu trong bucket dùng cho log của AWS Config. Chọn bucket → Delete → Nhập tên bucket để xác nhận. 4.4 Xóa SNS Topics và Subscriptions Vào Amazon SNS. Mở danh sách Topics và xóa topic. Vào Subscriptions và xóa tất cả subscription liên quan. 4.5 Xóa IAM User Vào IAM → Users. Chọn user đã tạo cho workshop. Gỡ access keys và policy liên kết. Xóa user. "
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/2.4-setup-sns-topic/",
+	"title": "Tạo SNS Topic",
+	"tags": [],
+	"description": "",
+	"content": "Tạo SNS Topic để nhận thông báo từ AWS Config SNS Topic sẽ gửi thông báo khi có sự thay đổi hoặc sự kiện liên quan đến AWS Config.\nVào dịch vụ SNS trong AWS Management Console. Chọn Topics → Create topic. Chọn Standard và nhập tên topic (ví dụ: config-alerts-23). Giữ nguyên các tùy chọn khác hoặc tùy chỉnh nếu cần. Nhấn Create topic. Sau khi tạo xong, chọn Create subscription: Chọn Protocol: Email (hoặc HTTPS, Lambda, SQS\u0026hellip; tùy yêu cầu). Nhập Endpoint (ví dụ: địa chỉ email nhận thông báo). Nhấn Create subscription. Xác nhận email để kích hoạt nhận thông báo. "
+},
+{
+	"uri": "http://localhost:1313/vi/2-preparation/2.5-setup-cloudtrail/",
+	"title": "Cấu hình AWS CloudTrail",
+	"tags": [],
+	"description": "",
+	"content": "Bật CloudTrail cho AWS Config AWS Config dựa vào AWS CloudTrail để ghi lại các lệnh API thay đổi tài nguyên. Chúng ta sẽ bật CloudTrail.\nVào dịch vụ CloudTrail trong AWS Management Console. Nếu chưa có trail, chọn Create trail. Đặt tên (ví dụ: config-trail). Chọn Create new S3 bucket hoặc bucket có sẵn để lưu log. Bật Log file validation để đảm bảo tính toàn vẹn của log. Nhấn Create trail. "
+},
+{
+	"uri": "http://localhost:1313/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/vi/",
+	"title": "Tuân thủ cấu hình với AWS Config và khắc phục",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

@@ -1,0 +1,106 @@
+[
+{
+	"uri": "http://localhost:1313/2-preparation/2.1-create-iam-user/",
+	"title": "Create IAM User",
+	"tags": [],
+	"description": "",
+	"content": "Create IAM User for AWS Config AWS Config requires an IAM User with sufficient permissions to configure and manage AWS resources.\nOpen the IAM service in the AWS Management Console. Go to Users → Add users. Enter a username (e.g., UserADMIN). In AWS access type, choose: Access key - Programmatic access if using CLI/SDK. Password - AWS Management Console access if Console login is needed. Click Next to set permissions: Choose Attach existing policies directly. Attach AdministratorAccess (or minimum required permissions like AWSConfigUserAccess). Click Next, skip tags if not needed. Select Create user. Save the Access key and Secret access key (if created for programmatic access). "
+},
+{
+	"uri": "http://localhost:1313/1-introduce/",
+	"title": "Introduction",
+	"tags": [],
+	"description": "",
+	"content": "Configuration Compliance with AWS Config and RemediationThis project focuses on building an AWS-based Configuration Compliance platform using AWS Config, Config Rules, and Automated Remediation. It ensures continuous compliance with predefined baselines, detects configuration drift, and automatically remediates violations. Key components include AWS Config setup, compliance rules, automated remediation, integration with EventBridge and CloudWatch for alerts, S3 logging for audits, and compliance dashboards for monitoring and reporting.\n"
+},
+{
+	"uri": "http://localhost:1313/3-configuration/3.1-setup-aws-config/",
+	"title": "Setting up AWS Config",
+	"tags": [],
+	"description": "",
+	"content": "Enable and Configure AWS Config AWS Config allows you to evaluate, audit, and monitor the configurations of your AWS resources. It also stores configuration history for compliance and auditing purposes.\nSteps to Configure Open the AWS Management Console and navigate to AWS Config. If this is your first time setting it up, click Get started. In the Settings section: Resource types: Select All resources (monitor all resources) or specify only the resource types you want to track. Delivery method: S3 bucket: Select the bucket created earlier to store configuration files. SNS Topic: Select the SNS Topic created in step 2.4 to receive change notifications. In the AWS Config role section: Select Create AWS Config service-linked role if you don’t already have one. Click Next → Review your settings. Click Confirm to enable AWS Config. Verifying AWS Config Once enabled, AWS Config will begin recording the current configuration state of resources and track any changes. To test: Modify a resource that AWS Config is tracking (e.g., change an S3 bucket policy). Go back to AWS Config → Resources → locate that resource. Check the Configuration timeline to see the recorded changes. ⚠ Note: Some minor changes (such as non-critical metadata updates) may not be recorded immediately. Synchronization can take a few minutes depending on the service.\n"
+},
+{
+	"uri": "http://localhost:1313/3-configuration/3.2-add-config-rules/",
+	"title": "Add Config Rules",
+	"tags": [],
+	"description": "",
+	"content": "Adding Config Rules to monitor compliance Config Rules let you define compliance standards and check whether AWS resources meet them.\nIn AWS Management Console, go to AWS Config → Rules → Add rule. Choose either AWS Managed Rules (pre-built) or Custom Rule (your own Lambda). Example: Search for and select required-tags to enforce tagging. Configure the rule parameters (if applicable). Choose Trigger: Configuration changes (trigger on changes). Periodic (run on a schedule). Click Next and then Add rule. "
+},
+{
+	"uri": "http://localhost:1313/2-preparation/2.2-create-ec2/",
+	"title": "Create EC2 Instance",
+	"tags": [],
+	"description": "",
+	"content": "Launching an EC2 Instance for Testing We will create a small EC2 instance to generate configuration changes that AWS Config can track.\nGo to the EC2 service in AWS Management Console. Click Launch instance. Enter a name (e.g., AWS-CONFIG). Choose an Amazon Machine Image (AMI), such as Amazon Linux 2. Select a small instance type (e.g., t2.micro). Under Key pair, create or select an existing key pair. In Network settings, allow only necessary inbound rules (e.g., SSH from your IP). Click Launch instance. "
+},
+{
+	"uri": "http://localhost:1313/2-preparation/",
+	"title": "Preparation",
+	"tags": [],
+	"description": "",
+	"content": "Preparation In this section, you will set up the foundational AWS resources needed for the workshop.\nThese steps must be completed before moving on to the configuration stage.\nYou will learn how to: Create an IAM User with appropriate permissions. Launch an EC2 instance. Create an S3 bucket for storage. Set up an SNS Topic for notifications. Enable CloudTrail to log API activities. "
+},
+{
+	"uri": "http://localhost:1313/3-configuration/",
+	"title": "Configuration",
+	"tags": [],
+	"description": "",
+	"content": "Configuration In this section, you will configure AWS services to monitor and automate responses to changes in your AWS environment.\nYou will learn how to: Enable and configure AWS Config to track resource changes. Create Config Rules to evaluate compliance. Set up Amazon EventBridge to respond to configuration changes. "
+},
+{
+	"uri": "http://localhost:1313/2-preparation/2.3-create-s3/",
+	"title": "Create S3 Bucket",
+	"tags": [],
+	"description": "",
+	"content": "Creating an Amazon S3 Bucket for AWS Config Logs Note: Before proceeding, ensure you have the necessary IAM permissions to create S3 buckets.\nAWS Config requires an S3 bucket to store configuration snapshots and compliance history. Follow these steps to create it:\nSign in to the AWS Management Console. Navigate to the S3 service. Click Create bucket. Enter a unique Bucket name (e.g., config-log-bucket-23). Choose the AWS Region where you want the bucket created. For Block Public Access settings, ensure Block all public access is enabled. Leave other settings as default and click Create bucket. "
+},
+{
+	"uri": "http://localhost:1313/3-configuration/3.3-setup-eventbridge/",
+	"title": "Setup EventBridge",
+	"tags": [],
+	"description": "",
+	"content": "Setting up EventBridge to receive AWS Config events EventBridge allows you to create automated event flows when configuration changes or compliance violations occur.\nIn AWS Management Console, go to Amazon EventBridge. Select Rules → Create rule. Enter a name (e.g., config-rule-violation). In Event source, choose: AWS services → AWS Config. In Event pattern, select: Event type: Config Rules Compliance Change or Configuration Item Change. In Target, choose: An SNS Topic, Lambda function, or Step Functions workflow to handle the event. Click Create. "
+},
+{
+	"uri": "http://localhost:1313/4-cleanup-resources/",
+	"title": "Cleanup Resources",
+	"tags": [],
+	"description": "",
+	"content": "Cleanup Resources Follow these steps to remove all AWS resources created during the workshop. Be careful – this will permanently delete data and configurations.\n4.1 Delete AWS Config Recorder \u0026amp; Delivery Channel Go to AWS Config → Settings. Stop the Configuration Recorder. Delete the Delivery Channel. Confirm deletion. 4.2 Delete Config Rules In AWS Config, go to Rules. Select each rule you created. Choose Delete → Confirm. 4.3 Delete S3 Buckets Go to Amazon S3. Empty the bucket used for AWS Config logs. Select the bucket → Delete → Type the bucket name to confirm. 4.4 Delete SNS Topics and Subscriptions Go to Amazon SNS. Open the Topics list and delete the topic. Go to Subscriptions and delete all related subscriptions. 4.5 Delete IAM User Go to IAM → Users. Select the user you created for this workshop. Remove any access keys or attached policies. Delete the user. "
+},
+{
+	"uri": "http://localhost:1313/2-preparation/2.4-setup-sns-topic/",
+	"title": "Setup SNS Topic",
+	"tags": [],
+	"description": "",
+	"content": "Setting up Amazon SNS Topic for AWS Config Notifications AWS Config can send change notifications and compliance updates via Amazon SNS. Let’s create a new topic and subscription.\nGo to the SNS service in AWS Management Console. Click Create topic. Choose Standard type and name your topic (e.g., config-alerts-23). Click Create topic. Inside the topic page, click Create subscription. Set Protocol to Email and enter your email address. Click Create subscription. Check your email and confirm the subscription by clicking the confirmation link. "
+},
+{
+	"uri": "http://localhost:1313/2-preparation/2.5-setup-cloudtrail/",
+	"title": "Setup AWS CloudTrail",
+	"tags": [],
+	"description": "",
+	"content": "Enabling CloudTrail for AWS Config AWS Config relies on AWS CloudTrail to record API calls for resource changes. Let’s enable it.\nGo to the CloudTrail service in AWS Management Console. If no trail exists, click Create trail. Enter a name (e.g., config-trail). Choose Create new S3 bucket or select an existing one for log storage. Enable Log file validation for integrity checking. Click Create trail. "
+},
+{
+	"uri": "http://localhost:1313/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/",
+	"title": "Configuration Compliance with AWS Config and Remediation.",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
